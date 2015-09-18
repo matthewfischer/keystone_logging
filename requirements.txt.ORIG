@@ -1,0 +1,3 @@
+# These are the original requirements:
+pika==0.10.0
+python-keystoneclient>=1.2.0
