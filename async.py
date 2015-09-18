@@ -225,6 +225,7 @@ class CADFConsumer(object):
     def on_message(self, unused_channel, basic_deliver, properties, body):
 #        LOGGER.debug('Received message # %s from %s: %s',
 #                    basic_deliver.delivery_tag, properties.app_id, body)
+        self.acknowledge_message(basic_deliver.delivery_tag)
         event = CADFEvent(json.loads(body))
         if event.event_type == 'identity.authenticate':
             print "USER AUTHENTICATED: %s" % get_crud_message(event)
@@ -238,7 +239,6 @@ class CADFConsumer(object):
             print "PROJECT CREATED: %s" % get_crud_message(event)
         elif event.event_type == 'identity.project.deleted':
             print "PROJECT DELETED: %s" % get_crud_message(event)
-        #self.acknowledge_message(basic_deliver.delivery_tag)
 
     def acknowledge_message(self, delivery_tag):
         LOGGER.debug('Acknowledging message %s', delivery_tag)
