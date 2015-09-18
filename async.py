@@ -26,6 +26,7 @@ class CADFEvent():
     def __init__(self, json_data):
         self.json_data = json_data
 #        print "event_type: %s" % json_data['event_type']
+#        import pdb; pdb.set_trace()
         self.event_type = json_data['event_type']
         self.timestamp = json_data['timestamp']
         self.outcome = json_data['payload']['outcome']
@@ -110,11 +111,18 @@ class CADFEvent():
 
 
 def get_crud_message(event):
-    return "%s %s at %s by %s (project: %s)" % \
-        (event.target_type, event.get_target_name(),
+    return "%s: %s %s at %s by %s (project: %s)." % \
+        (event.outcome, event.target_type, 
+        event.get_target_name(),
         event.timestamp,
         event.get_initiator_user_name(),
         event.get_initiator_project_name())
+
+def get_auth_message(event):
+    return "%s: %s at %s" % \
+        (event.outcome,
+        event.get_initiator_user_name(),
+        event.timestamp)
 
 
 class CADFConsumer(object):
@@ -228,7 +236,7 @@ class CADFConsumer(object):
         self.acknowledge_message(basic_deliver.delivery_tag)
         event = CADFEvent(json.loads(body))
         if event.event_type == 'identity.authenticate':
-            print "USER AUTHENTICATED: %s" % get_crud_message(event)
+            print "USER AUTH: %s" % get_auth_message(event)
         elif event.event_type == 'identity.user.created':
             CADFEvent.build_user_dict()
             print "USER CREATED: %s" % get_crud_message(event)
@@ -294,7 +302,7 @@ def main():
     CADFEvent.build_user_dict()
     CADFEvent.build_project_dict()
 
-    logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
+    logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
     consumer = CADFConsumer('amqp://%s:%s@%s:5672/' % (args.rabbit_user,
         args.rabbit_pass, args.rabbit_host))
     try:
