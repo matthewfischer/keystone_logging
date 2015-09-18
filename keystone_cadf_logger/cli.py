@@ -128,7 +128,7 @@ def get_auth_message(event):
 class CADFConsumer(object):
     EXCHANGE = 'keystone'
     EXCHANGE_TYPE = 'topic'
-    QUEUE = 'keystone.info'
+    QUEUE = ''
 
     def __init__(self, amqp_url):
         self._connection = None
@@ -292,7 +292,11 @@ def main():
     parser.add_argument("--rabbit_user", required=True)
     parser.add_argument("--rabbit_pass", required=True)
     parser.add_argument("--rabbit_host", required=True)
+    parser.add_argument("--rabbit_queue", default='keystone_to_cadf_logger')
     args = parser.parse_args()
+
+    # set the queue
+    CADFConsumer.QUEUE = args.rabbit_queue
 
     # Generate build our keystone user/project hashes
     CADFEvent.keystone_auth_url = args.auth_url
