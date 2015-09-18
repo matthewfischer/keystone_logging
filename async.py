@@ -30,6 +30,7 @@ class CADFEvent():
         self.timestamp = json_data['timestamp']
         self.outcome = json_data['payload']['outcome']
         try:
+            # V2 Doesn't provide initiator information.
             initiator = json_data['payload']['initiator']
             self.initiator_host = initiator['host']['address']
             self.initiator_host_agent = initiator['host']['agent']
@@ -222,11 +223,11 @@ class CADFConsumer(object):
             self._channel.close()
 
     def on_message(self, unused_channel, basic_deliver, properties, body):
-        LOGGER.debug('Received message # %s from %s: %s',
-                    basic_deliver.delivery_tag, properties.app_id, body)
+#        LOGGER.debug('Received message # %s from %s: %s',
+#                    basic_deliver.delivery_tag, properties.app_id, body)
         event = CADFEvent(json.loads(body))
         if event.event_type == 'identity.authenticate':
-           next
+            print "USER AUTHENTICATED: %s" % get_crud_message(event)
         elif event.event_type == 'identity.user.created':
             CADFEvent.build_user_dict()
             print "USER CREATED: %s" % get_crud_message(event)
@@ -293,7 +294,7 @@ def main():
     CADFEvent.build_user_dict()
     CADFEvent.build_project_dict()
 
-#    logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
+    logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
     consumer = CADFConsumer('amqp://%s:%s@%s:5672/' % (args.rabbit_user,
         args.rabbit_pass, args.rabbit_host))
     try:
