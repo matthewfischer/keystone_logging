@@ -1,5 +1,5 @@
 [gerrit]
 host=bfd-gerrit.os.cloud.twc.net
 port=29418
-project=puppet-config.git
+project=keystone_cadf_logger.git
 defaultbranch=master
