@@ -4,6 +4,7 @@ import argparse
 import json
 from keystoneclient.v3 import client
 import logging
+import os
 import pika
 import sys
 import socket
@@ -11,6 +12,7 @@ import socket
 LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
               '-35s %(lineno) -5d: %(message)s')
 LOGGER = logging.getLogger(__name__)
+LOGFILE = '/var/log/keystone_cadf'
 
 
 class CADFEvent():
@@ -299,8 +301,7 @@ def main():
         default=os.environ.get('RABBIT_PASS'))
     parser.add_argument("--rabbit_host", required=True,
         default=os.environ.get('RABBIT_HOST'))
-    parser.add_argument("--rabbit_queue", default='keystone_to_cadf_logger',
-        default=os.environ.get('RABBIT_QUEUE'))
+    parser.add_argument("--rabbit_queue", default='keystone_to_cadf_logger')
     args = parser.parse_args()
 
     # set the queue
@@ -314,7 +315,8 @@ def main():
     CADFEvent.build_user_dict()
     CADFEvent.build_project_dict()
 
-    logging.basicConfig(level=logging.INFO, format=LOG_FORMAT)
+    logging.basicConfig(level=logging.INFO, format=LOG_FORMAT,
+        filename=LOGFILE)
     consumer = CADFConsumer('amqp://%s:%s@%s:5672/' % (args.rabbit_user,
         args.rabbit_pass, args.rabbit_host))
     try:
