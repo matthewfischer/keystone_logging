@@ -287,14 +287,10 @@ def main():
     global keystone_auth_url, keystone_username, keystone_password, keystone_project
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--username", required=True,
-        default=os.environ.get('OS_USERNAME'))
-    parser.add_argument("--password", required=True,
-        default=os.environ.get('OS_PASSWORD'))
-    parser.add_argument("--project", required=True,
-        default=os.environ.get('OS_PROJECT'))
-    parser.add_argument("--auth_url", required=True,
-        default=os.environ.get('OS_AUTH_URL'))
+    parser.add_argument("--username", default=os.environ.get('OS_USERNAME'))
+    parser.add_argument("--password", default=os.environ.get('OS_PASSWORD'))
+    parser.add_argument("--project", default=os.environ.get('OS_TENANT_NAME'))
+    parser.add_argument("--auth_url", default=os.environ.get('OS_AUTH_URL'))
     parser.add_argument("--rabbit_user", required=True,
         default=os.environ.get('RABBIT_USER'))
     parser.add_argument("--rabbit_pass", required=True,
