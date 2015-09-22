@@ -238,17 +238,17 @@ class CADFConsumer(object):
         self.acknowledge_message(basic_deliver.delivery_tag)
         event = CADFEvent(json.loads(body))
         if event.event_type == 'identity.authenticate':
-            print "USER AUTH: %s" % get_auth_message(event)
+            LOGGER.info("USER AUTH: %s" % get_auth_message(event))
         elif event.event_type == 'identity.user.created':
             CADFEvent.build_user_dict()
-            print "USER CREATED: %s" % get_crud_message(event)
+            LOGGER.info("USER CREATED: %s" % get_crud_message(event))
         elif event.event_type == 'identity.user.deleted':
-            print "USER DELETED: %s" % get_crud_message(event)
+            LOGGER.info("USER DELETED: %s" % get_crud_message(event))
         elif event.event_type == 'identity.project.created':
             CADFEvent.build_project_dict()
-            print "PROJECT CREATED: %s" % get_crud_message(event)
+            LOGGER.info("PROJECT CREATED: %s" % get_crud_message(event))
         elif event.event_type == 'identity.project.deleted':
-            print "PROJECT DELETED: %s" % get_crud_message(event)
+            LOGGER.info("PROJECT DELETED: %s" % get_crud_message(event))
 
     def acknowledge_message(self, delivery_tag):
         LOGGER.debug('Acknowledging message %s', delivery_tag)
@@ -309,6 +309,7 @@ def main():
     CADFEvent.build_user_dict()
     CADFEvent.build_project_dict()
 
+    print "Logging all events to %s, expect no output" % LOGFILE
     logging.basicConfig(level=logging.INFO, format=LOG_FORMAT,
         filename=LOGFILE)
     consumer = CADFConsumer('amqp://%s:%s@%s:5672/' % (args.rabbit_user,
