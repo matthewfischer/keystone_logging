@@ -2,7 +2,7 @@
 
 import argparse
 import json
-from keystoneclient.v3 import client
+from keystoneclient.v2_0 import client
 import logging
 import os
 import pika
@@ -20,9 +20,9 @@ class CADFEvent():
     _projects_hash = {}
     keystone_username = ""
     keystone_password = ""
+    keystone_region = ""
     keystone_project = ""
     keystone_auth_url = ""
-    keystone_domain = "Default"
 
     # this code makes me sad.
     def __init__(self, json_data):
@@ -87,7 +87,7 @@ class CADFEvent():
     @classmethod
     def build_project_dict(self):
         keystone = self.get_keystone_context()
-        projects = keystone.projects.list()
+        projects = keystone.tenants.list()
         for project in projects:
             self._projects_hash[project.id] = project
 
@@ -103,9 +103,9 @@ class CADFEvent():
         try:
             keystone = client.Client(auth_url=self.keystone_auth_url,
                 username=self.keystone_username,
-                domain=self.keystone_domain,
                 password=self.keystone_password,
-                project_name=self.keystone_project)
+                region=self.keystone_region,
+                tenant_name=self.keystone_project)
         except Exception as e:
             print e
             sys.exit(1)
@@ -290,6 +290,7 @@ def main():
     parser.add_argument("--username", default=os.environ.get('OS_USERNAME'))
     parser.add_argument("--password", default=os.environ.get('OS_PASSWORD'))
     parser.add_argument("--project", default=os.environ.get('OS_TENANT_NAME'))
+    parser.add_argument("--region", default=os.environ.get('OS_REGION_NAME'))
     parser.add_argument("--auth_url", default=os.environ.get('OS_AUTH_URL'))
     parser.add_argument("--rabbit_user", default=os.environ.get('RABBIT_USER'))
     parser.add_argument("--rabbit_pass", default=os.environ.get('RABBIT_PASS'))
