@@ -295,7 +295,7 @@ def main():
     parser.add_argument("--rabbit_user", default=os.environ.get('RABBIT_USER'))
     parser.add_argument("--rabbit_pass", default=os.environ.get('RABBIT_PASS'))
     parser.add_argument("--rabbit_host", default=os.environ.get('RABBIT_HOST'))
-    parser.add_argument("--rabbit_queue", default='keystone_to_cadf_logger')
+    parser.add_argument("--rabbit_queue", default='keystone_to_cadf_logger.info')
     args = parser.parse_args()
 
     # set the queue
