@@ -291,12 +291,9 @@ def main():
     parser.add_argument("--password", default=os.environ.get('OS_PASSWORD'))
     parser.add_argument("--project", default=os.environ.get('OS_TENANT_NAME'))
     parser.add_argument("--auth_url", default=os.environ.get('OS_AUTH_URL'))
-    parser.add_argument("--rabbit_user", required=True,
-        default=os.environ.get('RABBIT_USER'))
-    parser.add_argument("--rabbit_pass", required=True,
-        default=os.environ.get('RABBIT_PASS'))
-    parser.add_argument("--rabbit_host", required=True,
-        default=os.environ.get('RABBIT_HOST'))
+    parser.add_argument("--rabbit_user", default=os.environ.get('RABBIT_USER'))
+    parser.add_argument("--rabbit_pass", default=os.environ.get('RABBIT_PASS'))
+    parser.add_argument("--rabbit_host", default=os.environ.get('RABBIT_HOST'))
     parser.add_argument("--rabbit_queue", default='keystone_to_cadf_logger')
     args = parser.parse_args()
 
