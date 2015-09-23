@@ -9,7 +9,6 @@ import pika
 import sys
 import socket
 
-LOG_FORMAT = ('%(levelname) %(asctime)s %(message)s')
 LOGGER = logging.getLogger(__name__)
 LOGFILE = '/var/log/keystone_cadf/keystone_cadf.log'
 
@@ -112,18 +111,14 @@ class CADFEvent():
 
 
 def get_crud_message(event):
-    return "%s: %s %s at %s by %s (project: %s)." % \
+    return "%s: %s %s by %s (project: %s)." % \
         (event.outcome, event.target_type, 
         event.get_target_name(),
-        event.timestamp,
         event.get_initiator_user_name(),
         event.get_initiator_project_name())
 
 def get_auth_message(event):
-    return "%s: %s at %s" % \
-        (event.outcome,
-        event.get_initiator_user_name(),
-        event.timestamp)
+    return "%s: %s" % (event.outcome, event.get_initiator_user_name())
 
 
 class CADFConsumer(object):
@@ -309,7 +304,9 @@ def main():
     CADFEvent.build_project_dict()
 
     print "Logging all events to %s, expect no output" % LOGFILE
-    logging.basicConfig(level=logging.INFO, format=LOG_FORMAT,
+    logging.basicConfig(level=logging.INFO,
+        format='%(levelname)s %(asctime)s.%(msecs).03d %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S',
         filename=LOGFILE)
     consumer = CADFConsumer('amqp://%s:%s@%s:5672/' % (args.rabbit_user,
         args.rabbit_pass, args.rabbit_host))
